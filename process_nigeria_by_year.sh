@@ -37,23 +37,39 @@ for year in "${YEARS[@]}"; do
     echo "Processing Year: $year"
     echo "=========================================="
 
-    # Step 1: Extract features for this year
-    echo "Step 1: Extracting features for $year..."
+    # Step 1a: Extract LGA features for this year
+    echo "Step 1a: Extracting LGA features for $year..."
     python nigeria_pipeline.py \
         --extract \
         --years "$year" \
         --lga-file "$LGA_FILE" \
+        --optimized \
+        --keep-raw-tiffs \
+        --output-dir "$OUTPUT_DIR"
+
+    if [ $? -ne 0 ]; then
+        echo "Error: LGA extraction failed for year $year"
+        exit 1
+    fi
+
+    echo "✓ LGA extraction complete for $year"
+
+    # Step 1b: Extract STATE features for this year (reuses same GeoTIFFs)
+    echo "Step 1b: Extracting STATE features for $year..."
+    python nigeria_pipeline.py \
+        --extract \
+        --years "$year" \
         --state-file "$STATE_FILE" \
         --optimized \
         --keep-raw-tiffs \
         --output-dir "$OUTPUT_DIR"
 
     if [ $? -ne 0 ]; then
-        echo "Error: Extraction failed for year $year"
+        echo "Error: STATE extraction failed for year $year"
         exit 1
     fi
 
-    echo "✓ Extraction complete for $year"
+    echo "✓ STATE extraction complete for $year"
 
     # Step 2: Upload raw GeoTIFFs for this year
     echo ""
