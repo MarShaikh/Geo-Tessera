@@ -325,6 +325,13 @@ class NigeriaEmbeddingPipeline:
                             if not polygon_geom_native.intersects(tile_bounds_box):
                                 continue
 
+                            # Check if polygon is valid
+                            if not polygon_geom_native.is_valid:
+                                # Try to fix invalid geometries
+                                polygon_geom_native = polygon_geom_native.buffer(0)
+                                if not polygon_geom_native.is_valid:
+                                    continue
+
                             # Use the already-reprojected geometry
                             polygon_geom = [polygon_geom_native.__geo_interface__]
 
@@ -355,10 +362,13 @@ class NigeriaEmbeddingPipeline:
                                 if len(valid) > 0:
                                     all_band_pixels[band_idx].extend(valid.flatten())
 
-                            tiles_processed += 1
+                            # Only count as processed if we got valid pixels
+                            if len(valid) > 0:
+                                tiles_processed += 1
 
                     except Exception as e:
-                        print(f"\n  Warning: Error processing {tiff_file.name}: {e}")
+                        # Only print error in verbose mode, otherwise skip silently
+                        # print(f"\n  Warning: Error processing {tiff_file.name}: {e}")
                         continue
 
                 # Compute statistics
