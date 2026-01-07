@@ -15,8 +15,8 @@ if [ -z "$AZURE_STORAGE_CONNECTION_STRING" ]; then
 fi
 
 # Configuration
-LGA_FILE="nigeria_boundaries/nga_admbnda_adm2_*.shp"
-STATE_FILE="nigeria_boundaries/nga_admbnda_adm1_*.shp"
+LGA_FILE="nigeria_boundaries/nga_admin2.shp"
+STATE_FILE="nigeria_boundaries/nga_admin1.shp"
 CONTAINER="nigeria-embeddings"
 OUTPUT_DIR="nigeria_embeddings"
 
